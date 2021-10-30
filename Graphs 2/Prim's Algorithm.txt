@@ -1,0 +1,88 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+//time: O(v)
+int findMinVertexVisited(int *weight, bool *visited, int v){
+    int minVertex = -1;
+    for(int i=0; i<v; i++){
+        if(!visited[i] && (minVertex == -1 || weight[i] < weight[minVertex])){
+            minVertex = i;
+        }
+    }
+    return minVertex;
+}
+
+//time: O(v)
+void printMST_Sum(int *weight, int v){
+    int sum = 0;
+    
+    sum = accumulate(weight, weight + v, 0);
+    cout << sum << endl;
+}
+//time time : O((v-1) *(v + v) )
+void primsAlgo(int **adjMat, int v){
+    int *weight = new int[v];
+    int *parent = new int[v];
+    bool *visited = new bool[v]();
+    
+    for(int i=0; i<v; i++){
+        weight[i] = INT_MAX;
+    }
+    parent[0] = -1; 
+    weight[0] = 0;
+    
+    for(int i=0; i<v-1; i++){
+        int minVertex_notVisited = findMinVertexVisited(weight, visited, v);
+        visited[minVertex_notVisited] = true;
+        
+        //exploring uvisited neighbours of minVertex_notVisited
+        for(int j=0; j<v; j++){
+            if(adjMat[minVertex_notVisited][j] != 0 && !visited[j] && adjMat[minVertex_notVisited][j] < weight[j]){
+                weight[j] = adjMat[minVertex_notVisited][j];
+                parent[j] = minVertex_notVisited;
+            }
+        }
+    }
+    
+    printMST_Sum(weight, v);
+    
+   //delete space 
+    delete[] visited, parent, weight;
+    
+}
+
+
+int main(){
+    
+    int t;
+    cin >> t;
+    while(t--){
+        int v, e;
+        cin >> v >> e;
+        
+        int **adjMat =new int*[v];
+        for(int i=0; i<v; i++){
+            adjMat[i] = new int[v]();
+        }
+        
+        for(int i=0; i<e; i++){
+            int s, d, w;
+            cin >> s >> d >> w;
+            if(adjMat[s][d] == 0 || adjMat[s][d] > w)
+            	adjMat[s][d] = w;
+            if(adjMat[d][s] == 0 || adjMat[d][s] > w) 
+            	adjMat[d][s] = w;
+            // adjMat[s][d] = w;
+            // adjMat[d][s] = w;
+        }
+        
+        primsAlgo(adjMat, v);
+        
+        //delete space
+        for(int i=0; i<v; i++){
+            delete[] adjMat[i];
+        }
+        delete[] adjMat;
+    }
+    return 0;
+}

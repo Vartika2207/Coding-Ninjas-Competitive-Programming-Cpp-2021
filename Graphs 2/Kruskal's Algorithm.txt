@@ -1,0 +1,83 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+
+class Edge{
+    public:
+    int source, dest, weight;
+};
+
+//time: O(v)
+int findParent(int v, int *parent){
+    if(parent[v] == v)
+         return v;
+    return findParent(parent[v], parent);
+}
+
+//time: O(eloge)
+bool cmp(Edge a, Edge b){
+    return a.weight < b.weight;
+}
+
+//time: O(n)
+void printMSTSum(Edge *output, int size){
+    int sum = 0;
+    for(int i=0; i<size; i++){
+        sum += output[i].weight;
+    }
+    cout << sum << endl;
+    return;
+}
+
+//time :O(eloge + e*(n-1))
+void  krushkals(Edge *input, int n, int e){
+    //sort according weight-asc
+    sort(input, input + e, cmp);
+    Edge *output = new Edge[n-1];
+    
+    int *parent = new int[n];
+    for(int i=0; i<n; i++){
+        parent[i] = i;
+    }
+    int count = 0; //keeps count of number of edges added
+    int i = 0; //for current edge
+    while(count != n-1){
+        Edge currEdge = input[i];
+        
+        //chrck if edge cn be added in mst
+        int srcParent = findParent(currEdge.source, parent);
+        int destParent = findParent(currEdge.dest, parent);
+        
+        if(srcParent != destParent){
+            output[count] = currEdge;
+            count ++;
+            parent[srcParent] = destParent;
+        }
+        i++;
+    }
+    //printing mst
+    printMSTSum(output, n-1);
+}
+
+
+int main(){
+    int t;
+    cin >> t;
+    while(t--){
+        int n, e;
+        cin >> n >> e;
+        Edge *input = new Edge[e];
+        for(int i=0; i<e; i++){
+            int s, d, w;
+            cin >> s >> d >> w;
+            input[i].source = s;
+            input[i].dest = d;
+            input[i].weight = w;
+        }
+
+        krushkals(input, n, e);
+    
+    }
+    
+    return 0;
+}

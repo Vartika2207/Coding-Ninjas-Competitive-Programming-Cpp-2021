@@ -1,0 +1,77 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+//time: O(v)
+void printShortestPath(int **edgeMat, int *distance, int v){
+    for(int i=0; i<v; i++){
+        cout << i << " " << distance[i] << endl;
+    }
+}
+
+//time: O(v)
+int find_min_distanceVertex(int *distance, bool *visited, int v){
+    int min_distanceVertex = -1;
+    for(int i=0; i<v; i++){
+        if(!visited[i] && (min_distanceVertex == -1 || distance[min_distanceVertex] > distance[i])){
+            min_distanceVertex = i;
+        }
+    }
+    return min_distanceVertex;
+}
+
+//time: O((v-1) * (v + v)) ~ O(v^2)
+void dijkstrasAlgo(int **edgeMat, int v){
+    bool *visited = new bool[v]();
+    int *distance = new int[v];
+    for(int i=0; i<v; i++){
+        distance[i] = INT_MAX;
+    }
+    distance[0] = 0; //distance from src to src
+    
+    for(int i=0; i<v-1; i++){
+        int min_distanceVertex = find_min_distanceVertex(distance, visited, v); 
+        visited[min_distanceVertex] = true;
+        
+        for(int neighbrVertex = 0; neighbrVertex<v; neighbrVertex++){
+            if(edgeMat[min_distanceVertex][neighbrVertex] && !visited[neighbrVertex]){
+                if(distance[neighbrVertex] > distance[min_distanceVertex] + edgeMat[min_distanceVertex][neighbrVertex] ){
+                    distance[neighbrVertex] = distance[min_distanceVertex] + edgeMat[min_distanceVertex][neighbrVertex];
+                }
+            }
+        }
+    }
+    //printing path from source to vertex with distanxe
+    printShortestPath(edgeMat, distance, v);
+    return;
+}
+
+int main(){
+    
+    int t;
+    cin >> t;
+    while(t--){
+        int v, e;
+        cin >> v >> e;
+        
+        int **edgeMat = new int*[v];
+        for(int i=0; i<v; i++){
+            edgeMat[i] = new int[v]();
+        }
+        for(int i=0; i<e; i++){
+            int s, d, w;
+            cin >> s >> d >> w;
+            if(edgeMat[s][d] == 0 || edgeMat[s][d] > w)
+                edgeMat[s][d] = w;
+            if(edgeMat[d][s] == 0 || edgeMat[d][s] > w)
+                edgeMat[d][s] = w;
+        }
+        dijkstrasAlgo(edgeMat, v);
+        
+        //free space
+        for(int i=0; i<v; i++){
+            delete[] edgeMat[i];
+        }
+        delete[] edgeMat;
+    }
+    return 0;
+}

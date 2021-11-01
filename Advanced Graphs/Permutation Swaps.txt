@@ -1,0 +1,102 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+//time: O(linear)
+void dfs(vector<int> *edges, int n, int idx, unordered_set<int> *component, bool *visited){
+    visited[idx] = true;
+    component->insert(idx);
+    
+    for(auto j: edges[idx]){
+        if(!visited[j]){
+            dfs(edges, n, j, component, visited);
+        }
+    }
+}
+
+//time: O(n^2)
+unordered_set<unordered_set<int> *> *connected_components(vector<int> *edges, int n){
+    bool *visited = new bool[n]();
+    
+    unordered_set<unordered_set<int> *> *output = new unordered_set<unordered_set<int> *>();
+    
+    for(int i=0; i<n; i++){
+        if(!visited[i]){
+            unordered_set<int> *smallOutput = new unordered_set<int>();
+            dfs(edges, n, i, smallOutput, visited);
+            output->insert(smallOutput);
+        }
+    }
+    //free space
+    delete[] visited;
+    
+    return output;
+}
+
+//time: O(n^2 + n)
+void permutaion_possible(int *p, int *q, int n, vector<int> *edges){
+    unordered_set<unordered_set<int> *> *components = connected_components(edges, n);
+    unordered_set<unordered_set<int> *> :: iterator itr1 = components->begin();
+    
+    bool permutation_possible = true;
+    
+    while(itr1 != components->end()){
+        unordered_set<int> *component = *itr1;
+        unordered_set<int> :: iterator itr2 = component->begin();
+        unordered_set<int> p_swapping, q_swapping;
+        while(itr2 != component->end()){
+            p_swapping.insert(p[*itr2]);
+            q_swapping.insert(q[*itr2]);
+            itr2++;
+        }
+        if(p_swapping != q_swapping){
+            permutation_possible = false;
+        }
+        if(!permutation_possible)
+            break;
+        
+        itr1++;
+        
+        //free space
+        delete component;
+    }
+    
+    cout << (permutation_possible ? "YES" : "NO") << endl;
+    
+    //free space
+    delete components;
+}
+
+int main(){
+    
+    int t;
+    cin >> t;
+    while(t--){
+        int n, m;
+        cin >> n >> m;
+        int *p = new int[n]();
+        for(int i=0; i<n; i++){
+            cin >> p[i];
+        }
+        
+        int *q = new int[n]();
+        for(int i=0; i<n; i++){
+            cin >> q[i];
+        }
+        
+        //storing good pair as graph
+        vector<int> *edges = new vector<int>[n];
+        while(m--){
+            int s, d;
+            cin >> s >> d;
+            edges[s-1].push_back(d-1); //storing according to 0-based indexing
+            edges[d-1].push_back(s-1); //storing according to 0-based indexing
+        }
+        
+        
+        permutaion_possible(p, q, n, edges);
+        
+        //free space
+        delete[] p, q;
+    }
+    return 0;
+}

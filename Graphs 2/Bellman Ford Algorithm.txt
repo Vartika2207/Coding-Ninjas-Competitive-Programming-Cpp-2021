@@ -1,0 +1,65 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+class Edge{
+  public:
+    int v1, v2, weight;
+};
+
+void bellman_fordAlgorithm(Edge **edges, int v, int e, int src, int dest){
+    int *distance = new int[v+1];
+    for(int i=0; i<=v; i++){
+        distance[i] = 1e9;
+    }
+    distance[src] = 0;
+    
+    for(int i=0; i<v-1; i++){
+        for(int j=0; j<e; j++){
+            int s = edges[j]->v1;
+            int d = edges[j]->v2;
+            int w = edges[j]->weight;
+            
+            if(distance[s] != 1e9 && distance[d] > distance[s] + w){
+                distance[d] = distance[s] + w;
+            }
+        }
+    }
+    
+    //check for -ve cycle
+    for(int j=0; j<e; j++){
+            int s = edges[j]->v1;
+            int d = edges[j]->v2;
+            int w = edges[j]->weight;
+            
+            if(distance[s] != 1e9 && distance[d] > distance[s] + w){
+                cout << INT_MAX << endl;
+                return;
+            }
+        }
+    
+      cout << distance[dest] <<endl;
+  
+}
+
+
+int main(){
+    
+    int t;
+    cin >> t;
+    while(t--){
+        int v, e;
+        cin >> v >> e;
+        Edge **edges = new Edge*[e];
+        
+        int src, dest;
+        cin >> src >> dest;
+        
+        for(int i=0; i<e; i++){
+            edges[i] = new Edge();
+            cin >> edges[i]->v1 >> edges[i]->v2 >> edges[i]->weight;
+        }
+        
+        bellman_fordAlgorithm(edges, v, e, src, dest);
+    }
+    return 0;
+}

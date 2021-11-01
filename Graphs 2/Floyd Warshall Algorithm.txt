@@ -1,0 +1,71 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+//time: O(v^3)
+void floyd_warshallAlgorithm(int **adjMat, int v, int **distance){
+    for(int k=1; k<=v; k++){
+        for(int i=1; i<=v; i++){
+            for(int j=1; j<=v; j++){
+                if(distance[k][j] == INT_MAX || distance[i][k] == INT_MAX)
+                    continue;
+                if(distance[i][j] > distance[i][k] + distance[k][j]){
+                    distance[i][j] =  distance[i][k] + distance[k][j];
+                }
+            }
+        }
+    }
+}
+
+int main(){
+    
+    int t;
+    cin >> t;
+    while(t--){
+        int v, e;
+        cin >> v >> e;
+        
+        
+        int **adjMat = new int*[v+1];
+        for(int i=0; i<=v; i++){
+            adjMat[i] = new int[v+1];
+            for(int j=0; j<=v; j++){
+            adjMat[i][j] = INT_MAX;
+           }
+        }
+        
+        for(int i=0; i<e; i++){
+            int s, d, w;
+            cin >> s >> d >> w;
+            if(adjMat[s][d] == INT_MAX || adjMat[s][d] > w)
+                adjMat[s][d] = w;
+            if(adjMat[d][s] == INT_MAX || adjMat[d][s] > w)
+                adjMat[d][s] = w;
+        }
+        
+        //distance matrix
+        int **distance = new int*[v+1];
+        for(int i=0; i<=v; i++){
+            distance[i] = new int[v+1];
+        }
+
+        for(int i=1; i<=v; i++){
+            for(int j=1; j<=v; j++){
+                distance[i][j] = adjMat[i][j];
+            }
+        }
+        
+        floyd_warshallAlgorithm(adjMat, v, distance);
+        int q;
+        cin >> q;
+        while(q--){
+            int s, d;
+            cin >> s >> d;
+            if(s == d)
+                cout << 0 << endl;
+            else
+               cout << (distance[s][d] == INT_MAX ? 1e9 : distance[s][d]) << endl;
+        }
+        
+    }
+    return 0;
+}

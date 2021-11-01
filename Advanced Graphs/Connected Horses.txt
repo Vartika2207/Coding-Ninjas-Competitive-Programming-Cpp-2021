@@ -1,0 +1,94 @@
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long int lli;
+const int  mod = 1e9 + 7;
+
+lli factorials(int num){
+    lli f = 1;
+    for(lli i=1; i<=num; i++){
+        f = ((f % mod) * (i % mod)) % mod;
+    }
+    return f % mod;
+}
+
+//time: O(1)
+bool isValid(int x, int y, int n, int m){
+    return ((x >= 0 && x < n) && (y >= 0 && y < m));
+}
+
+
+void dfs(int **board, bool **visited, int &size, int x, int y, int n, int m){
+    visited[x][y] = true;
+    size++;
+    
+    int dXdY[8][2] = {{2, 1}, {2, -1}, {-2, 1}, {-2, -1}, {1, 2}, {1, -2}, {-1, 2}, {-1, -2}};
+    for(int i=0; i<8; i++){
+        int newX = x + dXdY[i][0];
+        int newY = y + dXdY[i][1];
+        
+        if(isValid(newX, newY, n, m) && !visited[newX][newY] && board[newX][newY]){
+            dfs(board, visited, size, newX, newY, n, m);
+        }
+    }
+}
+
+int main(){
+    
+    int t;
+    cin >> t;
+    while(t--){
+        int n, m, q;   //nXm board size, q is number of horses
+        cin >> n >> m >> q;
+        
+        int **board = new int*[n];
+        for(int i=0; i<n; i++){
+            board[i] = new int[m]();
+        }
+        
+        
+        
+        //taking horse positions
+        while(q--){
+            int x, y;
+            cin >> x >> y;
+            board[x-1][y-1] = 1;
+        }
+        
+        bool **visited = new bool*[n];
+        for(int i=0; i<n; i++){
+            visited[i] = new bool[m]();
+        }
+        
+        //checking for connected components
+        vector<lli> components;// = new vector<lli>();
+        for(int i=0; i<n; i++){
+            for(int j=0; j<m; j++){
+                if(board[i][j] && !visited[i][j]){
+                    int size = 0;
+                    dfs(board, visited, size, i, j, n, m);
+                    components.push_back(size);
+                }
+            }
+        }
+        
+        lli fact = 1;
+        for(int i=0; i<components.size(); i++){
+            fact = ((fact % mod) * (factorials(components[i]) % mod)) % mod;
+        }
+        
+        cout << fact << endl;
+        
+        //free space
+        for(int i=0; i<n; i++){
+            delete[] visited[i];
+        }
+        delete[] visited;
+        for(int i=0; i<n; i++){
+            delete[] board[i];
+        }
+        delete[] board;
+    }
+    return 0;
+}
+
+

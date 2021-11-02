@@ -1,0 +1,101 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+
+void dfs(vector<int>* edges, int start, unordered_set<int> &visited, stack<int> &finishStack) {
+	visited.insert(start);
+	for (int i = 0; i < edges[start].size(); i++) {
+		int adjacent = edges[start][i];
+		if (visited.count(adjacent) == 0) {
+			dfs(edges, adjacent, visited, finishStack);
+		}
+	}
+	finishStack.push(start);
+}
+
+void dfs2(vector<int>* edges, int start, unordered_set<int>* component, unordered_set<int> & visited) {
+	visited.insert(start);
+	component->insert(start);
+	for (int i = 0; i < edges[start].size(); i++) {
+		int adjacent = edges[start][i];
+		if (visited.count(adjacent) == 0) {
+			dfs2(edges, adjacent, component, visited);
+		}
+	}
+}
+
+unordered_set<unordered_set<int>*>* getSCC(vector<int>* edges, vector<int>* edgesT, int n) {
+	unordered_set<int> visited;
+	stack<int> finishedVertices;
+	for (int i = 0; i < n; i++) {
+		if (visited.count(i) == 0) {
+			dfs(edges, i, visited, finishedVertices);
+		}
+	}
+	unordered_set<unordered_set<int>*>* output = new unordered_set<unordered_set<int>*>();
+	visited.clear();
+	while (finishedVertices.size() != 0) {
+		int element = finishedVertices.top();
+		finishedVertices.pop();
+		if (visited.count(element) != 0) {
+			continue;
+		}
+		unordered_set<int>* component = new unordered_set<int>();
+		dfs2(edgesT, element, component, visited);
+		output->insert(component);
+	}
+	return output;
+}
+
+void print_component(unordered_set<int>* component){
+    unordered_set<int> :: iterator itr = component->begin();
+    while(itr != component->end()){
+        cout << *itr + 1 << " ";
+    }
+}
+
+void __bottom(vector<int>* edges, vector<int>* edges_transpose, int n){
+    
+    unordered_set<unordered_set<int>*>* components = getSCC(edges, edges_transpose, n);
+    unordered_set<unordered_set<int>*> :: iterator itr1 = components->begin();
+    while(itr1 != components->end()){
+        unordered_set<int>* component = *itr1;
+        unordered_set<int> :: iterator itr2 = component->begin();
+        bool isBottom = true;
+        while(itr2 != component->end()){
+            if(edges[*itr2].size() != 0){
+                isBottom = false;
+                break;
+            }
+        }
+        if(isBottom){
+           cout<<1;// print_component(component);
+        }
+    }
+    //free space
+}
+
+
+int main(){
+    
+    int t;
+    cin >> t;
+    while(t--){
+        int n, m; //denoting the number of vertex and edges respectively
+        cin >> n >> m;
+        vector<int>* edges = new vector<int>[n]();
+        vector<int>* edges_transpose = new vector<int>[n]();
+        while(m--){
+            int a, b; //denoting the number of vertex and edges respectively
+            cin >> a >> b;
+            edges[a-1].push_back(b-1);
+            edges_transpose[b-1].push_back(a-1);
+        }
+        
+        __bottom(edges, edges_transpose, n);
+        
+        //free space
+        // delete[] edges;
+    }
+    return 0;
+}

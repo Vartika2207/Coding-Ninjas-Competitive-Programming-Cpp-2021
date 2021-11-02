@@ -1,0 +1,75 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+//Kosaraju's algo--> time: O(v + e)
+
+void dfs(vector<int>* domino, int start, unordered_set<int>& visited, stack<int>& finishedVertices){
+    visited.insert(start);
+    
+    for(auto i: domino[start]){
+        if(!visited.count(i)){
+            dfs(domino, i, visited, finishedVertices);
+        }
+    }
+    finishedVertices.push(start);
+}
+
+void dfs_countSCC(vector<int>* domino, int start, unordered_set<int>& visited){
+    visited.insert(start);
+    
+    for(auto i: domino[start]){
+        if(!visited.count(i)){
+            dfs_countSCC(domino, i, visited);
+        }
+    }
+}
+
+void minimum_number_dominos(vector<int>* domino, int n){
+    unordered_set<int> visited;
+    stack<int> finishedVertices;
+    
+    for(int i=0; i<n; i++){
+        if(!visited.count(i)){
+            dfs(domino, i, visited, finishedVertices);
+        }
+    }
+    
+    //kosaraju's algo
+    visited.clear();
+    int count = 0;
+    // unordered_set<unordered_set<int>*>* components = new unordered_set<unordered_set<int>*>();
+    while(!finishedVertices.empty()){
+        int element = finishedVertices.top();
+        finishedVertices.pop();
+        
+        if(visited.count(element))  continue;
+        count ++;
+        dfs_countSCC(domino, element, visited);
+    }
+    
+    //the minimum number of dominos that must be knocked over by hand in order for all the dominos to fall.
+    cout << count << endl;
+}
+
+int main(){
+    
+    int t;
+    cin >> t;
+    while(t--){
+        int n; //number of domino tiles
+        int m;
+        cin >> n >> m;
+        vector<int>* domino = new vector<int>[n]();
+    
+        while(m--){
+            int x, y;
+            cin >> x >> y;
+            domino[x-1].push_back(y-1);
+        }
+         minimum_number_dominos(domino, n);
+        
+        //free space
+        delete[] domino;
+    }
+    return 0;
+}

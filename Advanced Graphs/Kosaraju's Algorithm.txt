@@ -1,0 +1,96 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+// Kosaraju's algorithm--> time: O(V + E)
+
+
+void dfs(vector<int>* edges, int start, unordered_set<int> &visited, stack<int>& finishStack){
+    visited.insert(start);
+    
+    for(auto i: edges[start]){
+        if(!visited.count(i)){
+            dfs(edges, i, visited, finishStack);
+        }
+    }
+    finishStack.push(start);
+}
+
+void dfs_collectSCC(vector<int>* edges_transpose, int start, unordered_set<int>* component, unordered_set<int> &visited){
+    visited.insert(start);
+    component->insert(start);
+    
+    for(auto i: edges_transpose[start]){
+        if(!visited.count(i)){
+            dfs_collectSCC(edges_transpose, i, component, visited);
+        }
+    }
+}
+
+unordered_set<unordered_set<int>*> *getSCC(vector<int>  *edges, vector<int> *edges_transpose, int n){
+    unordered_set<int>visited;
+    stack<int> finishedVertices;
+    
+    for(int i=0; i<n; i++){
+        if(!visited.count(i)){
+            dfs(edges, i, visited, finishedVertices);
+        }
+    }
+    
+    //taking edges_tranpose now
+    unordered_set<unordered_set<int>*> *output = new unordered_set<unordered_set<int>*>();
+    visited.clear();
+    while(!finishedVertices.empty()){
+        int element = finishedVertices.top();
+        finishedVertices.pop();
+        if(visited.count(element))
+           continue;
+        unordered_set<int>* component = new unordered_set<int>();
+        dfs_collectSCC(edges_transpose, element, component, visited);   
+        output->insert(component);
+    }
+    return output;
+}
+
+void printSCC(unordered_set<unordered_set<int>*>* components, int n){
+    unordered_set<unordered_set<int>*> :: iterator itr1 = components->begin();
+    
+    while(itr1 != components->end()){
+        unordered_set<int>* component = *itr1;
+        unordered_set<int> :: iterator itr2 = component->begin();
+        while(itr2 != component->end()){
+            cout << *itr2 + 1 << " ";
+            itr2++;
+        }
+        itr1++;
+        cout << endl;
+        
+        //free space
+        delete component;
+    }
+}
+
+
+int main() {
+    int n;
+    cin >> n;
+    vector<int> *edges = new vector<int>[n];
+    vector<int> *edges_Transpose = new vector<int>[n];
+    
+    int q;
+    cin >> q;
+    while(q--){
+        int s, d;
+        cin >> s >> d;
+        edges[s-1].push_back(d-1);
+        edges_Transpose[d-1].push_back(s-1);
+    }
+    unordered_set<unordered_set<int>*>* components = getSCC(edges, edges_Transpose, n);
+    
+    printSCC(components, n);
+    
+    //free space
+    delete components;
+    delete[] edges, edges_Transpose;
+    
+    
+}

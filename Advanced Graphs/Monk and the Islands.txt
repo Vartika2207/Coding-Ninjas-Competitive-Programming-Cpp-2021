@@ -1,0 +1,55 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+
+//time bfs: O(v + e)
+int monk_island(vector<int>* adj, int n){
+    int *visited = new int[n]();
+    queue<int> pendingNodes;
+    pendingNodes.push(0);
+    visited[0] = 1;
+    int *count = new int[n]();
+    
+    while(!pendingNodes.empty()){
+        int front = pendingNodes.front();
+        pendingNodes.pop();
+        
+        for(auto i: adj[front]){
+            if(!visited[i]){
+                pendingNodes.push(i);
+                count[i] = count[front] + 1;
+                visited[i] = true;
+            }
+        }
+    }
+    int steps = count[n-1];
+    
+    //free space
+    delete[] visited, count;
+    
+    return steps;
+}
+
+int main(){
+    
+    int t;
+    cin >> t;
+    while(t--){
+        int n, m;
+        cin >> n >> m;
+        vector<int>* adj = new vector<int>[n];
+        
+        while(m--){
+            int s, d;
+            cin >> s >> d;
+            adj[s-1].push_back(d-1);
+            adj[d-1].push_back(s-1);
+        }
+        
+        cout << monk_island(adj, n) << endl;
+        
+        //free space
+        delete[] adj;
+    }
+    return 0;
+}

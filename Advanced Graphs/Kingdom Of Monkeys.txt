@@ -1,0 +1,61 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+int dfs(vector<int>* team, int *banana, int n, bool *visited, int curr){
+    int count = banana[curr];
+    visited[curr] = true;
+    
+    for(auto i: team[curr]){
+        if(visited[i]) continue;
+        count += dfs(team, banana, n, visited, i);
+    }
+    return count;
+}
+
+int total_gold_earned(vector<int>* team, int *banana, int n){
+    bool *visited = new bool[n]();
+    int maxCollection = -1;
+    
+    for(int i=0; i<n; i++){
+        if(visited[i]) continue;
+        int mate_collection = dfs(team, banana, n, visited, i);
+        maxCollection = max(maxCollection, mate_collection);
+    }
+    
+  
+    //free space
+    delete[] visited;
+    
+    return maxCollection;
+}
+
+int main(){
+    
+    int t;
+    cin >> t;
+    while(t--){
+        int n, m;
+        cin >> n >> m;
+        
+        
+        vector<int>* team = new vector<int>[n];
+        while(m--){
+            int a, b;
+            cin >> a >> b;
+            team[a-1].push_back(b-1);
+            team[b-1].push_back(a-1);
+        }
+        
+        int *banana = new int[n];
+        for(int i=0; i<n; i++){
+            cin >> banana[i];
+        }
+        
+        cout << total_gold_earned(team, banana, n) << endl;
+        
+        //delete
+        delete[] banana, team;
+        
+    }
+    return 0;
+}

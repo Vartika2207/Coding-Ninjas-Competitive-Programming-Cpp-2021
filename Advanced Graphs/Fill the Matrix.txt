@@ -1,0 +1,59 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+bool dfs(vector<pair<int, int>>* b, int n, int *col, int start){
+    for(auto i: b[start]){
+        int a = i.first;
+        if(col[a] == -1){
+            col[a] = i.second ^ col[start] ;
+            dfs(b, n, col, a);
+        }
+        else if(col[a] != col[start] ^ i.second)
+            return false;
+    }
+    return true;
+}
+
+bool fill_matrix(vector<pair<int, int>>* b, int n){
+    int *col = new int[n];
+    for(int i=0; i<n; i++){
+        col[i] = -1;
+    }
+    
+    for(int i=0; i<n; i++){
+        if(col[i] == -1){
+            col[i] = 0;
+            if(!dfs(b, n, col, i))
+                return false;;
+        }
+    }
+    //free space
+    delete[] col;
+    
+    return true;
+}
+
+int main(){
+    
+    int t;
+    cin >> t;
+    while(t--){
+        int n, q;
+        cin >> n >> q;
+        
+        vector<pair<int, int>>* b = new vector<pair<int, int>>[n];
+        
+        while(q--){
+            int i, j, val;
+            cin >> i >> j >> val;
+            b[i-1].push_back({j-1, val});
+            b[j-1].push_back({i-1, val});
+        }
+        
+        bool ans = fill_matrix(b, n);
+        cout << (ans ? "yes" : "no") << endl;
+        //free space
+        delete[] b;
+    }
+    return 0;
+}

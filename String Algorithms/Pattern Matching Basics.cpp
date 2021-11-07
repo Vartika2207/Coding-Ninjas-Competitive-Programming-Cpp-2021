@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+//time: O(n*m)
 bool isMatching(string s, string p){
     int s_size = s.size();
     int p_size = p.size();

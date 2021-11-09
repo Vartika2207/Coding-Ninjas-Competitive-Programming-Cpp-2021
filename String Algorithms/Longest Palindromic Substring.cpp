@@ -1,3 +1,23 @@
+/**********
+Longest Palindromic Substring
+
+You are given a string S .You have to find the length of the longest palindromic substring of S.
+Input Format:
+First line of input contains the string S.
+Constraints:
+1 <= |S| <= 4*10^6
+Output Format:
+You have to print the length of longest palindromic substring
+Sample Input 1:
+zkpbhxkmauuamkxsyi
+Sample Output 1:
+10
+Explanation:
+In the given sample test case, the longest palindromic substring is: xkmauuamkx.
+***********/
+
+
+
 #include<bits/stdc++.h>
 using namespace std;
 

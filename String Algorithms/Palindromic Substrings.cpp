@@ -1,6 +1,27 @@
 #include<bits/stdc++.h>
 using namespace std;
 
+/*************
+Palindromic Substrings
+
+Given a string S, count and return the number of substrings of S that are a palindrome.
+Single length substrings are also palindromes. You just need to print the count of palindromic substrings, not the actual substrings.
+Input Format:
+First line of input contains an integer T, representing the number of test cases.
+Next T lines contain the string S
+Constraints :
+1 <= Length of S <= 2000
+Output Format :
+For each test case, print the count of palindrome substrings in a new line.
+Sample Input 1:
+1
+aba
+Sample Output 1:
+4
+Explanation:
+The 4 palindrome substrings are "a", "b", "a" and "aba".
+**************/
+
 //counting palindromic substrs, time: O(n)
 int countPSS(string s){
     int count = 0;

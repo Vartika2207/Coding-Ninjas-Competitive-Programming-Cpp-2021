@@ -1,3 +1,22 @@
+/*****************
+Maximum XOR Subarray
+
+Given an array of N integers, find the subarray whose XOR is maximum.
+Input Format:
+First line of input contains an integer N, representing number of elements in array.
+Next line contains N space-separated integers.
+Constraints:
+1 <= N <= 10^6
+1 <= A[i] <=10^5 
+Output Format:
+Print XOR of the subarray whose XOR of all elements in subarray is maximum over all subarrays.
+Sample Input 1:
+4
+1 2 3 4
+Sample Output 1:
+7
+*****************/
+
 #include<bits/stdc++.h>
 using namespace std;
 

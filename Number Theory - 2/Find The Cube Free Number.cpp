@@ -35,6 +35,7 @@ Not Cube Free
 8
 9
 ****/
+
 #include<bits/stdc++.h>
 using namespace std;
 #define max 1000000+1
